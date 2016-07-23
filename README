@@ -93,7 +93,8 @@ and archives for the old list can be found here:
 Building
 --------
 
-Just type 'configure', 'make' and 'make install'.
+1. cd hdr_histogram; cmake .; make; cd ..
+2. ./configure; make; [make install]
 
 Note that GNU make is required. On BSD it's available from devel/gmake;
 on Solaris it's in the SUNWgmake package. On platforms where GNU make

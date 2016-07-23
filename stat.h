@@ -3,6 +3,7 @@
 
 #include "iolog.h"
 #include "lib/output_buffer.h"
+#include "hdr_histogram/hdr_histogram.h"
 
 struct group_run_stats {
 	uint64_t max_run[DDIR_RWDIR_CNT], min_run[DDIR_RWDIR_CNT];
@@ -213,6 +214,9 @@ struct thread_stat {
 	uint64_t latency_target;
 	fio_fp64_t latency_percentile;
 	uint64_t latency_window;
+
+  struct hdr_histogram *histogram_lat_r;
+  struct hdr_histogram *histogram_lat_w;
 } __attribute__((packed));
 
 struct jobs_eta {

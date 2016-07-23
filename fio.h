@@ -41,6 +41,7 @@
 #include "flow.h"
 #include "io_u_queue.h"
 #include "workqueue.h"
+//#include "hdr_histogram/hdr_histogram.h"
 
 #ifdef CONFIG_SOLARISAIO
 #include <sys/asynch.h>
@@ -387,7 +388,28 @@ struct thread_data {
 	void *prof_data;
 
 	void *pinned_mem;
+
+  /*
+   * HCD latency stats
+   */
+  int hdr_lat_r_mean;
+  int hdr_lat_r_50;
+  int hdr_lat_r_90;
+  int hdr_lat_r_99;
+  int hdr_lat_r_9999;
+  int hdr_lat_r_max;
+  int hdr_lat_w_mean;
+  int hdr_lat_w_50;
+  int hdr_lat_w_90;
+  int hdr_lat_w_99;
+  int hdr_lat_w_9999;
+  int hdr_lat_w_max;
+  bool hdr_reset;    // let each job reset hdr lat
+
 };
+
+char *stat_agent_name;
+int   stat_agent_port;
 
 /*
  * when should interactive ETA output be generated

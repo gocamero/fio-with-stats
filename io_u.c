@@ -1710,12 +1710,15 @@ static inline bool gtod_reduce(struct thread_data *td)
 			|| td->o.gtod_reduce;
 }
 
+static unsigned long elapsed_last = 0;
+
 static void account_io_completion(struct thread_data *td, struct io_u *io_u,
 				  struct io_completion_data *icd,
 				  const enum fio_ddir idx, unsigned int bytes)
 {
 	const int no_reduce = !gtod_reduce(td);
 	unsigned long lusec = 0;
+  unsigned long elapsed_now = 0;
 
 	if (td->parent)
 		td = td->parent;
@@ -1728,6 +1731,40 @@ static void account_io_completion(struct thread_data *td, struct io_u *io_u,
 
 		tusec = utime_since(&io_u->start_time, &icd->time);
 		add_lat_sample(td, idx, tusec, bytes, io_u->offset);
+
+    switch (idx) {
+    case DDIR_READ:
+      hdr_record_value(td->ts.histogram_lat_r, tusec);
+      break;
+    case DDIR_WRITE:
+      hdr_record_value(td->ts.histogram_lat_w, tusec);
+    default:
+      break;
+    }
+    elapsed_now = mtime_since_now(&td->epoch);
+    if ((elapsed_now - elapsed_last) > DISK_UTIL_MSEC) {
+      // copy lat status to shared memory for output
+      elapsed_last = elapsed_now;
+      td->hdr_lat_r_mean = (td->ts.histogram_lat_r)->total_count==0
+                             ?0:hdr_mean(td->ts.histogram_lat_r);
+      td->hdr_lat_w_mean = (td->ts.histogram_lat_w)->total_count==0
+                             ?0:hdr_mean(td->ts.histogram_lat_w);
+      td->hdr_lat_r_50   = hdr_value_at_percentile(td->ts.histogram_lat_r, 50);
+      td->hdr_lat_w_50   = hdr_value_at_percentile(td->ts.histogram_lat_w, 50);
+      td->hdr_lat_r_90   = hdr_value_at_percentile(td->ts.histogram_lat_r, 90);
+      td->hdr_lat_w_90   = hdr_value_at_percentile(td->ts.histogram_lat_w, 90);
+      td->hdr_lat_r_99   = hdr_value_at_percentile(td->ts.histogram_lat_r, 99);
+      td->hdr_lat_w_99   = hdr_value_at_percentile(td->ts.histogram_lat_w, 99);
+      td->hdr_lat_r_9999 = hdr_value_at_percentile(td->ts.histogram_lat_r, 99.99);
+      td->hdr_lat_w_9999 = hdr_value_at_percentile(td->ts.histogram_lat_w, 99.99);
+      td->hdr_lat_r_max = hdr_max(td->ts.histogram_lat_r);
+      td->hdr_lat_w_max = hdr_max(td->ts.histogram_lat_w);
+    }
+    if (td->hdr_reset == true) {
+      hdr_reset(td->ts.histogram_lat_r);
+      hdr_reset(td->ts.histogram_lat_w);
+      td->hdr_reset = false;
+    }
 
 		if (td->flags & TD_F_PROFILE_OPS) {
 			struct prof_io_ops *ops = &td->prof_io_ops;

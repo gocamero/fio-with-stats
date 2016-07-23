@@ -235,7 +235,7 @@ static void fio_drain_client_text(struct fio_client *client)
 	} while (1);
 }
 
-static void remove_client(struct fio_client *client)
+void remove_client(struct fio_client *client)
 {
 	assert(client->refs);
 
@@ -457,7 +457,7 @@ static void probe_client(struct fio_client *client)
 	fio_net_send_cmd(client->fd, FIO_NET_CMD_PROBE, &pdu, sizeof(pdu), &tag, &client->cmd_list);
 }
 
-static int fio_client_connect_ip(struct fio_client *client)
+int fio_client_connect_ip(struct fio_client *client)
 {
 	struct sockaddr *addr;
 	socklen_t socklen;

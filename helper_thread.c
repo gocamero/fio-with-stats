@@ -73,6 +73,9 @@ static void *helper_thread_main(void *data)
 	struct timeval tv, last_du;
 	int ret = 0;
 
+  unsigned int hcd_count = 0;
+  hcd_output_init();
+
 	sk_out_assign(hd->sk_out);
 
 	gettimeofday(&tv, NULL);
@@ -126,6 +129,15 @@ static void *helper_thread_main(void *data)
 
 		if (!is_backend)
 			print_thread_status();
+
+    /*
+     * HCD timer for periodically sending status to remote agent.
+     * once every DISK_UTIL_MSEC*10
+     * DISK_UTIL_MSEC is default as about 250 ms
+     */
+    if (((hcd_count++) % 20) == 0) {
+      hcd_stat_send();
+    }    
 	}
 
 	fio_writeout_logs(false);

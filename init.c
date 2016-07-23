@@ -273,6 +273,11 @@ static struct option l_opts[FIO_NR_OPTIONS] = {
 		.has_arg	= required_argument,
 		.val		= 'K',
 	},
+  {
+    .name    = (char *) "stat-agent",
+    .has_arg = required_argument,
+    .val     = 'A',
+  },
 	{
 		.name		= NULL,
 	},
@@ -1389,6 +1394,22 @@ static int add_job(struct thread_data *td, const char *jobname, int job_add_num,
 	}
 	td->ddir_seq_nr = o->ddir_seq_nr;
 
+  // Init hdr-histogram
+  int64_t lowest = 1;
+  int64_t highest = 1000000000;
+  int sig_digits = 3;
+
+  td->hdr_reset = false;
+
+  if (hdr_init(lowest, highest, sig_digits, &td->ts.histogram_lat_r) != 0) {
+      log_err("fio: histogram failed to init lat_r\n");
+      goto err;
+  }
+  if (hdr_init(lowest, highest, sig_digits, &td->ts.histogram_lat_w) != 0) {
+      log_err("fio: histogram failed to init lat_w\n");
+      goto err;
+  }
+
 	if ((o->stonewall || o->new_group) && prev_group_jobs) {
 		prev_group_jobs = 0;
 		groupid++;
@@ -2021,6 +2042,7 @@ static void usage(const char *name)
 	printf("  --trigger=cmd\t\tSet this command as local trigger\n");
 	printf("  --trigger-remote=cmd\tSet this command as remote trigger\n");
 	printf("  --aux-path=path\tUse this path for fio state generated files\n");
+  printf("  --stat-agent=name:p\tHCD Stat Agent. default \"localhost:9998\"\n");
 	printf("\nFio was written by Jens Axboe <jens.axboe@oracle.com>");
 	printf("\n                   Jens Axboe <jaxboe@fusionio.com>");
 	printf("\n                   Jens Axboe <axboe@fb.com>\n");
@@ -2656,6 +2678,15 @@ int parse_cmd_line(int argc, char *argv[], int client_type)
 			}
 			trigger_timeout /= 1000000;
 			break;
+    case 'A':
+      stat_agent_name = strsep(&optarg, ":");
+      char *tempchar = strsep(&optarg, ":");
+      if (tempchar == NULL) {
+        printf("Use default Stat Agent port: 9998\n");
+        stat_agent_port = 9998;
+      } else
+        stat_agent_port = atoi(tempchar);
+      break;
 		case '?':
 			log_err("%s: unrecognized option '%s'\n", argv[0],
 							argv[optind - 1]);
@@ -2668,7 +2699,11 @@ int parse_cmd_line(int argc, char *argv[], int client_type)
 		if (do_exit)
 			break;
 	}
-
+  
+  if (stat_agent_name == NULL) {
+    stat_agent_name = strdup("localhost");
+    stat_agent_port = 9998;
+  }
 	if (do_exit && !(is_backend || nr_clients))
 		exit(exit_val);
 
