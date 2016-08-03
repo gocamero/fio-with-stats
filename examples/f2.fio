@@ -19,10 +19,10 @@ group_reporting
 #runtime=30
 
 [mixed]
-numjobs=32
+numjobs=1
 rw=randrw
-rwmixread=100
+rwmixread=95
 bs=4k
 iodepth=4
-filesize=160g
-runtime=20
+filesize=8g
+runtime=10m

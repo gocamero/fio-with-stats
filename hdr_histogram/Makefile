@@ -39,10 +39,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/hcd/swinstall/fio-hcd/hdr_histogram
+CMAKE_SOURCE_DIR = /home/ceph/code/fio-with-stats/hdr_histogram
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/hcd/swinstall/fio-hcd/hdr_histogram
+CMAKE_BINARY_DIR = /home/ceph/code/fio-with-stats/hdr_histogram
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -110,9 +110,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hcd/swinstall/fio-hcd/hdr_histogram/CMakeFiles /home/hcd/swinstall/fio-hcd/hdr_histogram/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ceph/code/fio-with-stats/hdr_histogram/CMakeFiles /home/ceph/code/fio-with-stats/hdr_histogram/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hcd/swinstall/fio-hcd/hdr_histogram/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ceph/code/fio-with-stats/hdr_histogram/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
