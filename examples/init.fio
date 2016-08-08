@@ -1,125 +1,118 @@
-# populate data into disk in parallel
-
 [global]
 ioengine=libaio
 direct=1
-
-#directory=/mount-point-of-ssd
-#filename=ssd.test.file
-#filename=/dev/sdd:/dev/sde:/dev/sdf:/dev/sdg:/dev/sdh
-
-filename=/dev/hcd-pool1/pool1
+filename=/dev/hcd-vol1/vol1
 group_reporting
 
-# write phase
+
 [vol0]
 rw=write
 numjobs=1
 bs=128k
-offset=0
-size=10g
+offset=0g
+size=4g
 
 [vol1]
 rw=write
 numjobs=1
 bs=128k
-offset=10g
-size=10g
+offset=4g
+size=4g
 
 [vol2]
 rw=write
 numjobs=1
 bs=128k
-offset=20g
-size=10g
+offset=8g
+size=4g
 
 [vol3]
 rw=write
 numjobs=1
 bs=128k
-offset=30g
-size=10g
+offset=12g
+size=4g
 
 [vol4]
 rw=write
 numjobs=1
 bs=128k
-offset=40g
-size=10g
+offset=16g
+size=4g
 
 [vol5]
 rw=write
 numjobs=1
 bs=128k
-offset=50g
-size=10g
+offset=20g
+size=4g
 
 [vol6]
 rw=write
 numjobs=1
 bs=128k
-offset=60g
-size=10g
+offset=24g
+size=4g
 
 [vol7]
 rw=write
 numjobs=1
 bs=128k
-offset=70g
-size=10g
+offset=28g
+size=4g
 
 [vol8]
 rw=write
 numjobs=1
 bs=128k
-offset=80g
-size=10g
+offset=32g
+size=4g
 
 [vol9]
 rw=write
 numjobs=1
 bs=128k
-offset=90g
-size=10g
+offset=36g
+size=4g
 
 [vol10]
 rw=write
 numjobs=1
 bs=128k
-offset=100g
-size=10g
+offset=40g
+size=4g
 
 [vol11]
 rw=write
 numjobs=1
 bs=128k
-offset=110g
-size=10g
+offset=44g
+size=4g
 
 [vol12]
 rw=write
 numjobs=1
 bs=128k
-offset=120g
-size=10g
+offset=48g
+size=4g
 
 [vol13]
 rw=write
 numjobs=1
 bs=128k
-offset=130g
-size=10g
+offset=52g
+size=4g
 
 [vol14]
 rw=write
 numjobs=1
 bs=128k
-offset=140g
-size=10g
+offset=56g
+size=4g
 
 [vol15]
 rw=write
 numjobs=1
 bs=128k
-offset=150g
-size=10g
+offset=60g
+size=4g

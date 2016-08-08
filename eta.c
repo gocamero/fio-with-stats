@@ -569,6 +569,36 @@ void display_thread_status(struct jobs_eta *je)
 			p += sprintf(p, "%*s", linelen_last - l, "");
 		linelen_last = l;
 
+    ////////
+    int buflen = 1000;
+    char buf[buflen];
+    int ret;
+    snprintf(buf, buflen, "{\"module_name\": \"fio\", \"type\": \"partial\", "
+             "\"bw_write\": \"%s\", \"bw_read\": \"%s\", "
+             "\"iops_write\": \"%s\", \"iops_read\": \"%s\"}",
+             rate_str[DDIR_WRITE], rate_str[DDIR_READ],
+             iops_str[DDIR_WRITE], iops_str[DDIR_READ]);
+    int hcdfd = hcd_stat_agent_connect(stat_agent_name, stat_agent_port);
+    if (hcdfd > 0) {
+      ret = send(hcdfd, "w", 1, 0);
+      if (ret !=1) {
+        printf("Missing header 'w'\n");
+      }
+      int tosend = strlen(buf);
+      int sent = 0;
+      while (tosend > 0) {
+        ret = send(hcdfd, buf + sent, tosend, 0);
+        if (ret <= 0) {
+          printf("Error sending json obj to remote Agent\n");
+          break;
+        }
+        tosend -= ret;
+        sent += ret;
+      }
+      close(hcdfd);
+    } else {
+    }
+
 		for (ddir = DDIR_READ; ddir < DDIR_RWDIR_CNT; ddir++) {
 			free(rate_str[ddir]);
 			free(iops_str[ddir]);
@@ -577,6 +607,7 @@ void display_thread_status(struct jobs_eta *je)
 	p += sprintf(p, "\r");
 
 	printf("%s", output);
+
 
 	if (!eta_new_line_init) {
 		fio_gettime(&disp_eta_new_line, NULL);
