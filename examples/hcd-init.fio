@@ -18,17 +18,3 @@ numjobs=1
 bs=128k
 offset=1g
 size=1g
-
-[part2]
-rw=write
-numjobs=1
-bs=128k
-offset=2g
-size=1g
-
-[part3]
-rw=write
-numjobs=1
-bs=128k
-offset=3g
-size=1g

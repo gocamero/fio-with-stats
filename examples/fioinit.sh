@@ -12,7 +12,7 @@ instances=$2
 totalsizegb=$1
 numjobs=$2
 filename=$3
-jobfile="./init.fio"
+jobfile="./hcd-init.fio"
 
 echo "will generate fio job file $jobfile"
 
@@ -28,7 +28,7 @@ offset=0
 
 for ((i = 0; i < $numjobs; i++)); do
   echo >> $jobfile
-  echo "[vol$i]" >> $jobfile
+  echo "[part$i]" >> $jobfile
   echo "rw=write" >> $jobfile
   echo "numjobs=1" >> $jobfile
   echo "bs=128k" >> $jobfile
