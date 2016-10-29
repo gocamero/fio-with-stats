@@ -6,7 +6,7 @@ bs=4k
 #directory=/mount-point-of-ssd
 #filename=/dev/sdd:/dev/sde:/dev/sdf:/dev/sdg:/dev/sdh
 
-filename=/dev/XXXXX
+filename=/dev/vol1/vol1_lv
 group_reporting
 
 [rand-read]
@@ -24,7 +24,8 @@ bs=4k
 numjobs=4
 iodepth=8
 runtime=30m
-rwmixread=80
+rwmixread=90
+time_based
 
 # disable verify when #jobs > 1, otherwise they may overwrite each other.
 

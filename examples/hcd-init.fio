@@ -1,7 +1,7 @@
 [global]
 ioengine=libaio
 direct=1
-filename=/dev/sdb1
+filename=/dev/vol1/vol1_lv
 group_reporting
 
 
@@ -17,4 +17,11 @@ rw=write
 numjobs=1
 bs=128k
 offset=1g
+size=1g
+
+[part2]
+rw=write
+numjobs=1
+bs=128k
+offset=2g
 size=1g
