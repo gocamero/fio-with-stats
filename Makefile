@@ -2,8 +2,9 @@ ifeq ($(SRCDIR),)
 SRCDIR := .
 endif
 
-HDRDIR = $(SRCDIR)/hdr_histogram
-# need to do cmake at $(HDRDIR)
+# high-dynamic-range histogram library code.
+HDRDIR := $(SRCDIR)/hdr_histogram
+HDRLIB := $(HDRDIR)/lib_hdr_histogram.a
 
 VPATH := $(SRCDIR)
 
@@ -26,8 +27,8 @@ endif
 DEBUGFLAGS = -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -DFIO_INC_DEBUG
 CPPFLAGS= -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DFIO_INTERNAL $(DEBUGFLAGS)
 OPTFLAGS= -g -ffast-math
-CFLAGS	= -std=gnu99 -Wwrite-strings -Wall -Wdeclaration-after-statement $(OPTFLAGS) $(EXTFLAGS) $(BUILD_CFLAGS) -I. -I$(SRCDIR)
-EXTLIBS = -L$(SRCDIR)/hdr_histogram -lhdr_histogram -Wl,-rpath=$(SRCDIR)/hdr_histogram
+CFLAGS	= -std=gnu99 -Wwrite-strings -Wall -Wdeclaration-after-statement $(OPTFLAGS) $(EXTFLAGS) $(BUILD_CFLAGS) -I. -I$(SRCDIR) -I$(HDRDIR)
+EXTLIBS =
 LIBS	+= -lm $(EXTLIBS)
 PROGS	= fio
 SCRIPTS = $(addprefix $(SRCDIR)/,tools/fio_generate_plots tools/plot/fio2gnuplot tools/genfio tools/fiologparser.py tools/fio_latency2csv.py)
@@ -401,12 +402,11 @@ t/stest: $(T_SMALLOC_OBJS)
 t/ieee754: $(T_IEEE_OBJS)
 	$(QUIET_LINK)$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $(T_IEEE_OBJS) $(LIBS)
 
-fio: $(FIO_OBJS)
-	cd $(HDRDIR) && \
-	cmake . && \
-	make -j 2 && \
-	cd .. && \
-	$(QUIET_LINK)$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $(FIO_OBJS) $(LIBS) $(HDFSLIB)
+libhdrhistogram :
+	cd $(HDRDIR); $(MAKE) $(MFLAGS)
+
+fio: $(FIO_OBJS) libhdrhistogram
+	$(QUIET_LINK)$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $(FIO_OBJS) $(LIBS) $(HDFSLIB) $(HDRLIB)
 
 gfio: $(GFIO_OBJS)
 	$(QUIET_LINK)$(CC) $(filter-out -static, $(LDFLAGS)) -o gfio $(GFIO_OBJS) $(LIBS) $(GFIO_LIBS) $(GTK_LDFLAGS) $(HDFSLIB)

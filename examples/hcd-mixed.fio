@@ -19,19 +19,19 @@ time_based
 
 [rand-rw]
 stonewall
-rw=randrw
+rw=randwrite
 bs=4k
-numjobs=4
+numjobs=1
 iodepth=8
 runtime=30m
-rwmixread=90
 time_based
+rate=8M
 
 # disable verify when #jobs > 1, otherwise they may overwrite each other.
 
 do_verify=0
 verify=crc32c
-verify_backlog=8
-verify_async=2
+verify_backlog=4
+verify_async=1
 #verify=md5
 #verify_dump=1
